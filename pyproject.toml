@@ -1,0 +1,17 @@
+[project]
+name = "langchain-memory-workshop"
+version = "0.1.0"
+description = "Warsztat pamięci agenta w LangGraph"
+requires-python = ">=3.12,<3.15"
+dependencies = [
+  "langgraph>=1,<2",
+  "langchain>=1,<2",
+  "pydantic>=2,<3",
+  "ipykernel>=6",
+  "jupyterlab>=4",
+  "langchain-openai>=1.6.2",
+]
+
+[project.optional-dependencies]
+openai = ["langchain-openai>=1,<2"]
+anthropic = ["langchain-anthropic>=1,<2"]

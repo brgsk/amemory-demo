@@ -1,0 +1,10 @@
+# Publish only participant materials. Keep authoring files local.
+/*
+!/.gitignore
+!/.python-version
+!/README.md
+!/agent_memory_workshop.ipynb
+!/agent_memory_workshop.html
+!/workshop_intro.html
+!/pyproject.toml
+!/uv.lock
