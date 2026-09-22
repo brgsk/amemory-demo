@@ -8223,7 +8223,7 @@ Po restarcie kernela otwórz nowy link. Panel jest lokalny; nie wymaga osobnego 
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="1.-Zapisujemy-tekst-%E2%80%94-3:00%E2%80%936:00">1. Zapisujemy tekst — 3:00–6:00<a class="anchor-link" href="#1.-Zapisujemy-tekst-%E2%80%94-3:00%E2%80%936:00">¶</a></h2><p>Potrzebujemy najprostszego miejsca na wspomnienia. Zapis dopisuje tekst do listy,
+<h2 id="1.-Zapisujemy-tekst">1. Zapisujemy tekst<a class="anchor-link" href="#1.-Zapisujemy-tekst">¶</a></h2><p>Potrzebujemy najprostszego miejsca na wspomnienia. Zapis dopisuje tekst do listy,
 a wyszukiwanie od początku dobiera kandydatów na podstawie znaczenia.
 Zapytanie i wspomnienia zamieniamy na embeddingi; podobieństwo cosinusowe ustala kolejność.
 Zwracamy maksymalnie 3 rekordy. LLM ocenia ich przydatność i tworzy odpowiedź.</p>
@@ -8444,7 +8444,7 @@ Puste query jest błędem, nie skrótem do pobrania całej pamięci.</p>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="2.-Dodajemy-kategori%C4%99-%E2%80%94-6:00%E2%80%939:00">2. Dodajemy kategorię — 6:00–9:00<a class="anchor-link" href="#2.-Dodajemy-kategori%C4%99-%E2%80%94-6:00%E2%80%939:00">¶</a></h2><p>Tekst staje się rekordem <code>{text, category}</code>. <code>save_memory</code> przyjmuje dodatkowy argument,
+<h2 id="2.-Dodajemy-kategori%C4%99">2. Dodajemy kategorię<a class="anchor-link" href="#2.-Dodajemy-kategori%C4%99">¶</a></h2><p>Tekst staje się rekordem <code>{text, category}</code>. <code>save_memory</code> przyjmuje dodatkowy argument,
 a <code>search_memory</code> potrafi filtrować kategorię.</p>
 <p>Zaczynamy od pustej pamięci i jawnych danych porównawczych. <strong>Nie migrujemy automatycznie wcześniejszych tekstów.</strong>
 Ponownie przekazujemy fakty w rozmowie. Model wybiera kategorię i argumenty zapisu; panel pokazuje wynik.</p>
@@ -8672,7 +8672,7 @@ Ponownie przekazujemy fakty w rozmowie. Model wybiera kategorię i argumenty zap
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="3.-Dodajemy-klucz-i-aktualizacj%C4%99-%E2%80%94-9:00%E2%80%9312:00">3. Dodajemy klucz i aktualizację — 9:00–12:00<a class="anchor-link" href="#3.-Dodajemy-klucz-i-aktualizacj%C4%99-%E2%80%94-9:00%E2%80%9312:00">¶</a></h2><p>Kategoria mówi <strong>jakiego rodzaju</strong> jest informacja. Klucz mówi <strong>który fakt</strong> aktualizujemy.
+<h2 id="3.-Dodajemy-klucz-i-aktualizacj%C4%99">3. Dodajemy klucz i aktualizację<a class="anchor-link" href="#3.-Dodajemy-klucz-i-aktualizacj%C4%99">¶</a></h2><p>Kategoria mówi <strong>jakiego rodzaju</strong> jest informacja. Klucz mówi <strong>który fakt</strong> aktualizujemy.
 Zamieniamy listę na słownik indeksowany przez <code>(category, key)</code>.</p>
 <p>To nadal bieżący stan: nadpisanie nie zachowuje historii. Model musi odczytać istniejący klucz, zanim zaktualizuje fakt.</p>
 </div>
@@ -8959,7 +8959,7 @@ Zamieniamy listę na słownik indeksowany przez <code>(category, key)</code>.</p
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="4.-Dodajemy-czas-obowi%C4%85zywania-%E2%80%94-12:00%E2%80%9317:00">4. Dodajemy czas obowiązywania — 12:00–17:00<a class="anchor-link" href="#4.-Dodajemy-czas-obowi%C4%85zywania-%E2%80%94-12:00%E2%80%9317:00">¶</a></h2><p>Zapisujemy wersje: <code>valid_from</code> włącznie, <code>valid_to</code> wyłącznie. <code>None</code> oznacza brak końca.
+<h2 id="4.-Dodajemy-czas-obowi%C4%85zywania">4. Dodajemy czas obowiązywania<a class="anchor-link" href="#4.-Dodajemy-czas-obowi%C4%85zywania">¶</a></h2><p>Zapisujemy wersje: <code>valid_from</code> włącznie, <code>valid_to</code> wyłącznie. <code>None</code> oznacza brak końca.
 Wyszukiwanie otrzymuje <code>valid_on</code> — dzień, którego dotyczy pytanie.</p>
 <p>Model wyciąga valid_from i valid_to z rozmowy. Text zawiera sam fakt. Zmiana zastępuje fakt tylko w podanym okresie; poza nim zachowujemy poprzednią zasadę.
 Jeszcze <strong>nie zapisujemy, kiedy dowiedzieliśmy się o zmianie</strong>.</p>
@@ -9308,7 +9308,7 @@ Aktualizujemy historię obowiązywania i ponownie pytamy o 13 IX.</p>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="5.-Dodajemy-czas-wiedzy-%E2%80%94-17:00%E2%80%9323:00">5. Dodajemy czas wiedzy — 17:00–23:00<a class="anchor-link" href="#5.-Dodajemy-czas-wiedzy-%E2%80%94-17:00%E2%80%9323:00">¶</a></h2><p>Potrzebujemy drugiej osi: <code>recorded_from/to</code>. Czas zapisu nadaje aplikacja; model go nie przekazuje.
+<h2 id="5.-Dodajemy-czas-wiedzy">5. Dodajemy czas wiedzy<a class="anchor-link" href="#5.-Dodajemy-czas-wiedzy">¶</a></h2><p>Potrzebujemy drugiej osi: <code>recorded_from/to</code>. Czas zapisu nadaje aplikacja; model go nie przekazuje.
 Do wyszukiwania dodajemy <code>known_on</code> — według wiedzy z którego dnia odpowiadamy.</p>
 <p>Zamiast poprawiać dawne rekordy ważności, zamykamy czas wiedzy o nich i dopisujemy nowy widok.
 <code>search_memory</code> sprawdza <strong>oba przedziały</strong>.</p>
@@ -9704,7 +9704,6 @@ Do wyszukiwania dodajemy <code>known_on</code> — według wiedzy z którego dni
 <h3 id="Co-dok%C5%82adnie-pokazuje-ten-eksperyment?">Co dokładnie pokazuje ten eksperyment?<a class="anchor-link" href="#Co-dok%C5%82adnie-pokazuje-ten-eksperyment?">¶</a></h3><p>W kolejnych etapach zmieniają się fakty, które potrafimy odczytać. Model sam wybiera argumenty i interpretuje wynik.
 Nie wymuszamy transportu w Pythonie i nie zakładamy, że błędny odczyt musi zawsze powodować błędną odpowiedź.</p>
 <p>W pytaniach historycznych używamy świeżych wątków. Filtry magazynu nie usuwają przyszłej wiedzy z wcześniejszych wiadomości w rozmowie.</p>
-<p><strong>23:00–25:00:</strong> podsumowanie, pytania i bufor. Z 30-minutowego slotu dodatkowe 5 minut zostaje na dyskusję.</p>
 </div>
 </div>
 </div>
@@ -9715,7 +9714,7 @@ Nie wymuszamy transportu w Pythonie i nie zakładamy, że błędny odczyt musi z
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Dodatki-%E2%80%94-poza-g%C5%82%C3%B3wn%C4%85-%C5%9Bcie%C5%BCk%C4%85">Dodatki — poza główną ścieżką<a class="anchor-link" href="#Dodatki-%E2%80%94-poza-g%C5%82%C3%B3wn%C4%85-%C5%9Bcie%C5%BCk%C4%85">¶</a></h2><h3 id="Czy-do-ka%C5%BCdego-pytania-trzeba-u%C5%BCy%C4%87-pami%C4%99ci?">Czy do każdego pytania trzeba użyć pamięci?<a class="anchor-link" href="#Czy-do-ka%C5%BCdego-pytania-trzeba-u%C5%BCy%C4%87-pami%C4%99ci?">¶</a></h3><p>Opcjonalny minutowy przykład: zadanie niezwiązane z podróżami. Zobaczmy, czy model sięgnie po pamięć. Prompt pozostaje ten sam.</p>
+<h2 id="Dodatki-%E2%80%94-poza-g%C5%82%C3%B3wn%C4%85-%C5%9Bcie%C5%BCk%C4%85">Dodatki — poza główną ścieżką<a class="anchor-link" href="#Dodatki-%E2%80%94-poza-g%C5%82%C3%B3wn%C4%85-%C5%9Bcie%C5%BCk%C4%85">¶</a></h2><h3 id="Czy-do-ka%C5%BCdego-pytania-trzeba-u%C5%BCy%C4%87-pami%C4%99ci?">Czy do każdego pytania trzeba użyć pamięci?<a class="anchor-link" href="#Czy-do-ka%C5%BCdego-pytania-trzeba-u%C5%BCy%C4%87-pami%C4%99ci?">¶</a></h3><p>Opcjonalny przykład: zadanie niezwiązane z podróżami. Zobaczmy, czy model sięgnie po pamięć. Prompt pozostaje ten sam.</p>
 </div>
 </div>
 </div>
