@@ -7810,7 +7810,7 @@ Każdy kolejny problem uzasadnia jedno rozszerzenie:</p>
 <p>Model sam używa naszych funkcji jako narzędzi i odpowiada. Naszym tematem jest ich implementacja.
 Jeden użytkownik, pamięć w RAM, przykład asystenta podróży służbowych.</p>
 <blockquote>
-<p>Run All wykonuje płatne wywołania prawdziwego modelu. Zapisane wyniki pochodzą z ostatniej próby.
+<p>Wysyłanie wiadomości korzysta z płatnego API. Uruchamiaj po kolei definicję etapu, panel i jego czat. Run All przejdzie od razu do ostatniego etapu.
 Cały kod jest w notebooku; nie ma importu lokalnych modułów ani symulowanych odpowiedzi.</p>
 </blockquote>
 </div>
@@ -7838,7 +7838,7 @@ Po zmianie funkcji tworzymy agenta ponownie. Model widzi tylko argumenty dostęp
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [1]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">date</span>
@@ -7952,7 +7952,7 @@ Po zmianie funkcji tworzymy agenta ponownie. Model widzi tylko argumenty dostęp
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [3]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">memory_observer</span> <span class="o">=</span> <span class="kc">None</span>
@@ -8019,7 +8019,7 @@ Po zmianie funkcji tworzymy agenta ponownie. Model widzi tylko argumenty dostęp
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [4]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">http.server</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseHTTPRequestHandler</span><span class="p">,</span> <span class="n">ThreadingHTTPServer</span>
@@ -8090,7 +8090,7 @@ Po zmianie funkcji tworzymy agenta ponownie. Model widzi tylko argumenty dostęp
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">show_facts</span><span class="p">(</span><span class="n">facts</span><span class="p">):</span>
@@ -8163,11 +8163,86 @@ Po zmianie funkcji tworzymy agenta ponownie. Model widzi tylko argumenty dostęp
 <span class="k">def</span><span class="w"> </span><span class="nf">ask</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">thread</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">run_agent</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">thread</span><span class="o">=</span><span class="n">thread</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">backend</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">open_chat</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">temporal</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Open a live conversation; new threads share the same memory store."""</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">ipywidgets</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">widgets</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">display</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">uuid</span><span class="w"> </span><span class="kn">import</span> <span class="n">uuid4</span>
+
+    <span class="k">if</span> <span class="nb">globals</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"active_chat"</span><span class="p">):</span>
+        <span class="nb">globals</span><span class="p">()[</span><span class="s2">"active_chat"</span><span class="p">]()</span>
+    <span class="n">save_function</span> <span class="o">=</span> <span class="n">save_memory</span>
+    <span class="n">thread</span> <span class="o">=</span> <span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Textarea</span><span class="p">(</span><span class="n">placeholder</span><span class="o">=</span><span class="s2">"Napisz wiadomość do agenta…"</span><span class="p">,</span>
+                               <span class="n">layout</span><span class="o">=</span><span class="n">widgets</span><span class="o">.</span><span class="n">Layout</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="s2">"100%"</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="s2">"90px"</span><span class="p">))</span>
+    <span class="n">send</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">"Wyślij"</span><span class="p">,</span> <span class="n">button_style</span><span class="o">=</span><span class="s2">"primary"</span><span class="p">)</span>
+    <span class="n">new</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">"Nowa rozmowa"</span><span class="p">)</span>
+    <span class="n">clock</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">DatePicker</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">"Otrzymano:"</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">date</span><span class="p">(</span><span class="mi">2026</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="s2">"Nowa rozmowa · pamięć współdzielona między wątkami"</span><span class="p">)</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Output</span><span class="p">()</span>
+    <span class="n">controls</span> <span class="o">=</span> <span class="p">[</span><span class="n">message</span><span class="p">,</span> <span class="n">send</span><span class="p">,</span> <span class="n">new</span><span class="p">]</span> <span class="o">+</span> <span class="p">([</span><span class="n">clock</span><span class="p">]</span> <span class="k">if</span> <span class="n">temporal</span> <span class="k">else</span> <span class="p">[])</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">disable</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">control</span> <span class="ow">in</span> <span class="n">controls</span><span class="p">:</span>
+            <span class="n">control</span><span class="o">.</span><span class="n">disabled</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">status</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s2">"Ten czat jest nieaktywny. Użyj czatu aktualnego etapu."</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">submit</span><span class="p">(</span><span class="n">_</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">save_memory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">save_function</span><span class="p">:</span>
+            <span class="n">disable</span><span class="p">()</span>
+            <span class="k">return</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">text</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">temporal</span> <span class="ow">and</span> <span class="n">clock</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">status</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s2">"Wybierz datę otrzymania wiadomości."</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">temporal</span><span class="p">:</span>
+            <span class="nb">globals</span><span class="p">()[</span><span class="s2">"TODAY"</span><span class="p">]</span> <span class="o">=</span> <span class="n">clock</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">control</span> <span class="ow">in</span> <span class="n">controls</span><span class="p">:</span>
+            <span class="n">control</span><span class="o">.</span><span class="n">disabled</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">status</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s2">"Agent odpowiada…"</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">output</span><span class="p">:</span>
+                <span class="n">ask</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">thread</span><span class="o">=</span><span class="n">thread</span><span class="p">)</span>
+            <span class="n">message</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s2">""</span>
+            <span class="n">status</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s2">"Możesz kontynuować rozmowę lub rozpocząć nowy wątek."</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="n">status</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Nie udało się zakończyć tury (</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">error</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">). Sprawdź pamięć przed ponowieniem."</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">control</span> <span class="ow">in</span> <span class="n">controls</span><span class="p">:</span>
+                <span class="n">control</span><span class="o">.</span><span class="n">disabled</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="n">_</span><span class="p">):</span>
+        <span class="k">nonlocal</span> <span class="n">thread</span>
+        <span class="n">thread</span> <span class="o">=</span> <span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span>
+        <span class="n">output</span><span class="o">.</span><span class="n">clear_output</span><span class="p">()</span>
+        <span class="n">status</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s2">"Nowy wątek · zapisane wspomnienia pozostają w magazynie"</span>
+
+    <span class="n">send</span><span class="o">.</span><span class="n">on_click</span><span class="p">(</span><span class="n">submit</span><span class="p">)</span>
+    <span class="n">new</span><span class="o">.</span><span class="n">on_click</span><span class="p">(</span><span class="n">reset</span><span class="p">)</span>
+    <span class="nb">globals</span><span class="p">()[</span><span class="s2">"active_chat"</span><span class="p">]</span> <span class="o">=</span> <span class="n">disable</span>
+    <span class="n">display</span><span class="p">(</span><span class="n">widgets</span><span class="o">.</span><span class="n">VBox</span><span class="p">(([</span><span class="n">clock</span><span class="p">]</span> <span class="k">if</span> <span class="n">temporal</span> <span class="k">else</span> <span class="p">[])</span> <span class="o">+</span>
+                        <span class="p">[</span><span class="n">message</span><span class="p">,</span> <span class="n">widgets</span><span class="o">.</span><span class="n">HBox</span><span class="p">([</span><span class="n">send</span><span class="p">,</span> <span class="n">new</span><span class="p">]),</span> <span class="n">status</span><span class="p">,</span> <span class="n">output</span><span class="p">]))</span>
 </pre></div>
 </div>
 </div>
 </div>
 </div></details>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=live-chat-guide">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="Rozmowa-na-%C5%BCywo">Rozmowa na żywo<a class="anchor-link" href="#Rozmowa-na-%C5%BCywo">¶</a></h3><p>W każdym etapie uruchom definicje pamięci, komórkę panelu i <code>open_chat</code>. Wpisuj wiadomości i klikaj <strong>Wyślij</strong>. Agent sam decyduje o użyciu narzędzi; poniżej pola zobaczysz odpowiedź i wywołania pamięci. <strong>Nowa rozmowa</strong> otwiera pusty wątek, ale zachowuje wspomnienia.</p>
+<p>Nowy etap zaczyna od pustego magazynu. W etapie 5 pole <strong>Otrzymano</strong> ustawia datę aplikacji dla kolejnej wiadomości. Nie służy do cofania zapisów. Do pytań o dawną wiedzę używaj nowych wątków i podawaj datę wiedzy w pytaniu.</p>
+<p>HTML jest wersją do czytania kodu i opisów. Czat wymaga działającego kernela Jupyter.</p>
+</div>
+</div>
+</div>
 </div>
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=panel-title">
 <div class="jp-Cell-inputWrapper" tabindex="0">
@@ -8187,7 +8262,7 @@ Po restarcie kernela otwórz nowy link. Panel jest lokalny; nie wymaga osobnego 
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">PANEL_HTML</span> <span class="o">=</span> <span class="s1">'&lt;!doctype html&gt;</span><span class="se">\n</span><span class="s1">&lt;html lang="pl"&gt;&lt;meta charset="utf-8"&gt;&lt;meta name="viewport" content="width=device-width,initial-scale=1"&gt;&lt;title&gt;Mapa pamięci · na żywo&lt;/title&gt;</span><span class="se">\n</span><span class="s1">&lt;style&gt;</span><span class="se">\n</span><span class="s1">:root{color-scheme:dark;--bg:#181a1e;--panel:#22252b;--line:#383c45;--text:#e4e5e9;--muted:#9298a5;--green:#89ceb6;--gold:#e3b77d;--plain:#a9accf}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 </span><span class="se">\'</span><span class="s1">Avenir Next</span><span class="se">\'</span><span class="s1">,</span><span class="se">\'</span><span class="s1">Trebuchet MS</span><span class="se">\'</span><span class="s1">,sans-serif;overflow:hidden}header{position:absolute;z-index:2;left:26px;top:22px;right:26px;pointer-events:none}header&gt;*{pointer-events:auto}h1{font-size:23px;letter-spacing:-.04em;font-weight:500;margin:0 0 4px}#stage{color:var(--muted);font-size:12px}#connection{float:right;color:var(--green);font-size:12px}.controls{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:20px;font-size:12px;color:var(--muted)}select,button{font:inherit;color:var(--text);border:1px solid var(--line);background:var(--panel);border-radius:6px;padding:7px 10px}label{display:flex;align-items:center;gap:7px}#count{color:var(--muted)}svg{width:100vw;height:100dvh;display:block;touch-action:none;user-select:none}#world{cursor:grab}.memory{cursor:pointer;outline:none}.memory circle{fill:var(--node);stroke:var(--node);stroke-width:1;transition:r .18s,stroke-width .18s}.memory:hover circle,.memory:focus circle{r:10;stroke-width:7;stroke-opacity:.2}.memory.selected circle{r:10;stroke:var(--text);stroke-width:2;stroke-opacity:1}.memory.old</span><span class="si">{opacity:.45}</span><span class="s1">.memory text{fill:var(--muted);font:12px </span><span class="se">\'</span><span class="s1">Avenir Next</span><span class="se">\'</span><span class="s1">,</span><span class="se">\'</span><span class="s1">Trebuchet MS</span><span class="se">\'</span><span class="s1">,sans-serif;text-anchor:middle;pointer-events:none}.memory:hover text,.memory:focus text,.memory.selected text{fill:var(--text)}.memory .date{font-size:10px;fill:var(--node)}#empty{position:absolute;top:43%;left:15%;right:15%;text-align:center;color:var(--muted);pointer-events:none;font-size:16px}#empty strong{display:block;color:var(--text);font-weight:400;font-size:23px;margin-bottom:8px}.legend{position:absolute;bottom:25px;left:26px;display:flex;gap:17px;color:var(--muted);font-size:12px;flex-wrap:wrap;max-width:65%}.legend i{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:7px}.navigation{position:absolute;bottom:22px;right:24px;display:flex;gap:5px}.navigation button{min-width:35px}.hint{position:absolute;left:26px;bottom:56px;color:var(--muted);font-size:11px;pointer-events:none}aside{position:absolute;right:24px;top:145px;width:min(335px,calc(100vw - 48px));background:#24272ded;border:1px solid var(--line);box-shadow:0 15px 50px #0005;border-radius:10px;padding:24px;max-height:calc(100dvh - 230px);overflow:auto;backdrop-filter:blur(12px)}aside[hidden]{display:none}aside h2{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--green);font-weight:500;margin:0 28px 16px 0}#detail-text{font-size:20px;line-height:1.55;margin:0 0 22px;overflow-wrap:anywhere}#detail-key{font:11px/1.6 ui-monospace,monospace;color:var(--muted);overflow-wrap:anywhere}dl{font-size:12px;border-top:1px solid var(--line);padding-top:14px;margin-top:18px}dt{color:var(--muted);margin-top:10px}dd{margin:3px 0;color:var(--text)}#close{position:absolute;right:13px;top:12px;border:0;background:none;font-size:20px}button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--green);outline-offset:3px}@media(max-width:550px){header{left:18px;right:18px}.controls{gap:8px}#connection{float:none;display:block;margin-bottom:6px}aside{top:auto;bottom:85px;max-height:42vh}.hint{max-width:65%;bottom:64px}.legend{left:18px;bottom:18px;gap:8px}}@media(prefers-reduced-motion:reduce){.memory circle{transition:none}}</span><span class="se">\n</span><span class="s1">&lt;/style&gt;</span><span class="se">\n</span><span class="s1">&lt;header&gt;&lt;span id="connection" role="status"&gt;Łączenie…&lt;/span&gt;&lt;h1&gt;Mapa pamięci&lt;/h1&gt;&lt;div id="stage"&gt;Notebook · oczekiwanie na dane&lt;/div&gt;&lt;div class="controls"&gt;&lt;label&gt;&lt;select id="category" aria-label="Kategoria"&gt;&lt;option value=""&gt;Wszystkie kategorie&lt;/option&gt;&lt;option value="preference"&gt;Preferencje&lt;/option&gt;&lt;option value="company_policy"&gt;Zasady firmy&lt;/option&gt;&lt;/select&gt;&lt;/label&gt;&lt;label&gt;&lt;input type="checkbox" id="history" checked&gt;Dawne wersje wiedzy&lt;/label&gt;&lt;span id="count"&gt;0 wspomnień&lt;/span&gt;&lt;/div&gt;&lt;/header&gt;</span><span class="se">\n</span><span class="s1">&lt;svg id="map" viewBox="0 0 1000 740" aria-label="Przestrzenna mapa wspomnień" role="group"&gt;&lt;rect width="1000" height="740" fill="transparent"/&gt;&lt;g id="world"&gt;&lt;/g&gt;&lt;/svg&gt;</span><span class="se">\n</span><span class="s1">&lt;div id="empty"&gt;&lt;strong&gt;Jeszcze nic nie pamiętam.&lt;/strong&gt;Pierwsza rozmowa doda tutaj wspomnienia.&lt;/div&gt;</span><span class="se">\n</span><span class="s1">&lt;aside id="detail" aria-label="Szczegóły wspomnienia" hidden&gt;&lt;button id="close" aria-label="Zamknij szczegóły"&gt;×&lt;/button&gt;&lt;h2 id="detail-category"&gt;&lt;/h2&gt;&lt;p id="detail-text"&gt;&lt;/p&gt;&lt;div id="detail-key"&gt;&lt;/div&gt;&lt;dl id="detail-dates"&gt;&lt;/dl&gt;&lt;/aside&gt;</span><span class="se">\n</span><span class="s1">&lt;div class="hint"&gt;Przeciągnij węzeł lub tło · przewiń, by przybliżyć · kliknij, by otworzyć&lt;/div&gt;&lt;div class="legend"&gt;&lt;span&gt;&lt;i style="background:var(--green)"&gt;&lt;/i&gt;Preferencja&lt;/span&gt;&lt;span&gt;&lt;i style="background:var(--gold)"&gt;&lt;/i&gt;Zasada firmy&lt;/span&gt;&lt;span&gt;&lt;i style="background:var(--plain)"&gt;&lt;/i&gt;Tekst&lt;/span&gt;&lt;/div&gt;&lt;div class="navigation"&gt;&lt;button id="minus" aria-label="Oddal"&gt;−&lt;/button&gt;&lt;button id="fit" aria-label="Wyśrodkuj mapę"&gt;⌾&lt;/button&gt;&lt;button id="plus" aria-label="Przybliż"&gt;+&lt;/button&gt;&lt;/div&gt;</span><span class="se">\n</span><span class="s1">&lt;script&gt;</span><span class="se">\n</span><span class="s1">const $=id=&gt;document.getElementById(id), svg=$(</span><span class="se">\'</span><span class="s1">map</span><span class="se">\'</span><span class="s1">),world=$(</span><span class="se">\'</span><span class="s1">world</span><span class="se">\'</span><span class="s1">),NS=</span><span class="se">\'</span><span class="s1">http://www.w3.org/2000/svg</span><span class="se">\'</span><span class="s1">;</span><span class="se">\n</span><span class="s1">const nodes=new Map(),colors={preference:</span><span class="se">\'</span><span class="s1">#89ceb6</span><span class="se">\'</span><span class="s1">,company_policy:</span><span class="se">\'</span><span class="s1">#e3b77d</span><span class="se">\'</span><span class="s1">},labels={preference:</span><span class="se">\'</span><span class="s1">Preferencja</span><span class="se">\'</span><span class="s1">,company_policy:</span><span class="se">\'</span><span class="s1">Zasada firmy</span><span class="se">\'</span><span class="s1">};</span><span class="se">\n</span><span class="s1">let state=null,selected=null,stage=null,lastSignature=</span><span class="se">\'\'</span><span class="s1">,zoom=1,pan={x:0,y:0},drag=null;</span><span class="se">\n</span><span class="s1">function element(tag,attrs=</span><span class="si">{}</span><span class="s1">){const e=document.createElementNS(NS,tag);for(const [k,v] of Object.entries(attrs))e.setAttribute(k,v);return e}</span><span class="se">\n</span><span class="s1">function identity(m){return JSON.stringify(m.key?[m.category,m.key,m.valid_from||</span><span class="se">\'\'</span><span class="s1">,m.recorded_from||</span><span class="se">\'\'</span><span class="s1">]:[m.category||</span><span class="se">\'\'</span><span class="s1">,m.text])}</span><span class="se">\n</span><span class="s1">function transform(){world.setAttribute(</span><span class="se">\'</span><span class="s1">transform</span><span class="se">\'</span><span class="s1">,`translate($</span><span class="si">{pan.x}</span><span class="s1"> $</span><span class="si">{pan.y}</span><span class="s1">) scale($</span><span class="si">{zoom}</span><span class="s1">)`)}</span><span class="se">\n</span><span class="s1">function point(event){return new DOMPoint(event.clientX,event.clientY).matrixTransform(svg.getScreenCTM().inverse())}</span><span class="se">\n</span><span class="s1">function changeZoom(factor,at={x:500,y:370}){const next=Math.max(.35,Math.min(3,zoom*factor));pan={x:at.x-(at.x-pan.x)*next/zoom,y:at.y-(at.y-pan.y)*next/zoom};zoom=next;transform()}</span><span class="se">\n</span><span class="s1">function details(){const n=nodes.get(selected);$(</span><span class="se">\'</span><span class="s1">detail</span><span class="se">\'</span><span class="s1">).hidden=!n||!n.visible;if(!n)return;const m=n.record;$(</span><span class="se">\'</span><span class="s1">detail-category</span><span class="se">\'</span><span class="s1">).textContent=(labels[m.category]||</span><span class="se">\'</span><span class="s1">Tekst</span><span class="se">\'</span><span class="s1">)+(m.recorded_to?</span><span class="se">\'</span><span class="s1"> · dawna wiedza</span><span class="se">\'</span><span class="s1">:</span><span class="se">\'\'</span><span class="s1">);$(</span><span class="se">\'</span><span class="s1">detail-category</span><span class="se">\'</span><span class="s1">).style.color=colors[m.category]||</span><span class="se">\'</span><span class="s1">#a9accf</span><span class="se">\'</span><span class="s1">;$(</span><span class="se">\'</span><span class="s1">detail-text</span><span class="se">\'</span><span class="s1">).textContent=m.text;$(</span><span class="se">\'</span><span class="s1">detail-key</span><span class="se">\'</span><span class="s1">).textContent=m.key?</span><span class="se">\'</span><span class="s1">key: </span><span class="se">\'</span><span class="s1">+m.key:</span><span class="se">\'\'</span><span class="s1">;$(</span><span class="se">\'</span><span class="s1">detail-dates</span><span class="se">\'</span><span class="s1">).replaceChildren();for(const [field,title,end] of [[</span><span class="se">\'</span><span class="s1">valid_from</span><span class="se">\'</span><span class="s1">,</span><span class="se">\'</span><span class="s1">Obowiązuje</span><span class="se">\'</span><span class="s1">,</span><span class="se">\'</span><span class="s1">valid_to</span><span class="se">\'</span><span class="s1">],[</span><span class="se">\'</span><span class="s1">recorded_from</span><span class="se">\'</span><span class="s1">,</span><span class="se">\'</span><span class="s1">Wiedzieliśmy</span><span class="se">\'</span><span class="s1">,</span><span class="se">\'</span><span class="s1">recorded_to</span><span class="se">\'</span><span class="s1">]]){if(!m[field])continue;const dt=document.createElement(</span><span class="se">\'</span><span class="s1">dt</span><span class="se">\'</span><span class="s1">),dd=document.createElement(</span><span class="se">\'</span><span class="s1">dd</span><span class="se">\'</span><span class="s1">);dt.textContent=title;dd.textContent=m[field]+</span><span class="se">\'</span><span class="s1"> → </span><span class="se">\'</span><span class="s1">+(m[end]||</span><span class="se">\'</span><span class="s1">∞</span><span class="se">\'</span><span class="s1">);$(</span><span class="se">\'</span><span class="s1">detail-dates</span><span class="se">\'</span><span class="s1">).append(dt,dd)}$(</span><span class="se">\'</span><span class="s1">detail-dates</span><span class="se">\'</span><span class="s1">).hidden=!m.valid_from}</span><span class="se">\n</span><span class="s1">function select(id){selected=id;for(const n of nodes.values())n.el.classList.toggle(</span><span class="se">\'</span><span class="s1">selected</span><span class="se">\'</span><span class="s1">,n.id===id);details()}</span><span class="se">\n</span><span class="s1">function layout(){const visible=[...nodes.values()].filter(n=&gt;n.visible);for(let tick=0;tick&lt;90;tick++){for(let i=0;i&lt;visible.length;i++){const a=visible[i];for(let j=i+1;j&lt;visible.length;j++){const b=visible[j];let dx=a.x-b.x,dy=a.y-b.y,dist=Math.hypot(dx,dy)||1;const min=140;if(dist&lt;min){const force=(min-dist)*.055;a.x+=dx/dist*force;a.y+=dy/dist*force;b.x-=dx/dist*force;b.y-=dy/dist*force}}a.x=Math.max(115,Math.min(885,a.x));a.y=Math.max(215,Math.min(590,a.y));}}for(const n of visible)n.el.setAttribute(</span><span class="se">\'</span><span class="s1">transform</span><span class="se">\'</span><span class="s1">,`translate($</span><span class="si">{n.x}</span><span class="s1"> $</span><span class="si">{n.y}</span><span class="s1">)`)}</span><span class="se">\n</span><span class="s1">function render(next){state=next;if(stage!==state.stage){nodes.clear();world.replaceChildren();selected=null;stage=state.stage;zoom=1;pan={x:0,y:0};transform()}const seen=new Set(),occurrences=new Map();state.records.forEach((m,index)=&gt;{const base=identity(m),occ=occurrences.get(base)||0;occurrences.set(base,occ+1);const id=base+</span><span class="se">\'</span><span class="s1">#</span><span class="se">\'</span><span class="s1">+occ;seen.add(id);let n=nodes.get(id);if(!n){const angle=index*2.39996,radius=65+Math.sqrt(index)*75;n={id,x:500+Math.cos(angle)*radius,y:365+Math.sin(angle)*radius,el:element(</span><span class="se">\'</span><span class="s1">g</span><span class="se">\'</span><span class="s1">,{class:</span><span class="se">\'</span><span class="s1">memory</span><span class="se">\'</span><span class="s1">,role:</span><span class="se">\'</span><span class="s1">button</span><span class="se">\'</span><span class="s1">,tabindex:</span><span class="se">\'</span><span class="s1">0</span><span class="se">\'</span><span class="s1">})};n.el.append(element(</span><span class="se">\'</span><span class="s1">circle</span><span class="se">\'</span><span class="s1">,</span><span class="si">{r:7}</span><span class="s1">),element(</span><span class="se">\'</span><span class="s1">text</span><span class="se">\'</span><span class="s1">,</span><span class="si">{y:29}</span><span class="s1">),element(</span><span class="se">\'</span><span class="s1">text</span><span class="se">\'</span><span class="s1">,{y:46,class:</span><span class="se">\'</span><span class="s1">date</span><span class="se">\'</span><span class="s1">}));n.el.onpointerdown=e=&gt;{e.stopPropagation();svg.setPointerCapture(e.pointerId);const p=point(e);drag={id,start:p,old:{x:n.x,y:n.y},moved:false}};n.el.onkeydown=e=&gt;{if(e.key===</span><span class="se">\'</span><span class="s1">Enter</span><span class="se">\'</span><span class="s1">||e.key===</span><span class="se">\'</span><span class="s1"> </span><span class="se">\'</span><span class="s1">){e.preventDefault();select(id)}};nodes.set(id,n);world.append(n.el)}n.record=m;n.visible=(!$(</span><span class="se">\'</span><span class="s1">category</span><span class="se">\'</span><span class="s1">).value||m.category===$(</span><span class="se">\'</span><span class="s1">category</span><span class="se">\'</span><span class="s1">).value)&amp;&amp;($(</span><span class="se">\'</span><span class="s1">history</span><span class="se">\'</span><span class="s1">).checked||!m.recorded_to);n.el.style.display=n.visible?</span><span class="se">\'\'</span><span class="s1">:</span><span class="se">\'</span><span class="s1">none</span><span class="se">\'</span><span class="s1">;n.el.setAttribute(</span><span class="se">\'</span><span class="s1">tabindex</span><span class="se">\'</span><span class="s1">,n.visible?</span><span class="se">\'</span><span class="s1">0</span><span class="se">\'</span><span class="s1">:</span><span class="se">\'</span><span class="s1">-1</span><span class="se">\'</span><span class="s1">);n.el.style.setProperty(</span><span class="se">\'</span><span class="s1">--node</span><span class="se">\'</span><span class="s1">,colors[m.category]||</span><span class="se">\'</span><span class="s1">#a9accf</span><span class="se">\'</span><span class="s1">);n.el.classList.toggle(</span><span class="se">\'</span><span class="s1">old</span><span class="se">\'</span><span class="s1">,!!m.recorded_to);n.el.setAttribute(</span><span class="se">\'</span><span class="s1">aria-label</span><span class="se">\'</span><span class="s1">,m.text);n.el.children[1].textContent=m.text.length&gt;36?m.text.slice(0,33)+</span><span class="se">\'</span><span class="s1">…</span><span class="se">\'</span><span class="s1">:m.text;n.el.children[2].textContent=m.recorded_from?</span><span class="se">\'</span><span class="s1">wiedza: </span><span class="se">\'</span><span class="s1">+m.recorded_from:m.valid_from?</span><span class="se">\'</span><span class="s1">od </span><span class="se">\'</span><span class="s1">+m.valid_from:</span><span class="se">\'\'</span><span class="s1">;});for(const [id,n]of nodes)if(!seen.has(id)){n.el.remove();nodes.delete(id)}if(!nodes.has(selected))selected=null;layout();select(selected);const count=[...nodes.values()].filter(n=&gt;n.visible).length;$(</span><span class="se">\'</span><span class="s1">count</span><span class="se">\'</span><span class="s1">).textContent=count+</span><span class="se">\'</span><span class="s1"> / </span><span class="se">\'</span><span class="s1">+state.records.length+</span><span class="se">\'</span><span class="s1"> wspomnień</span><span class="se">\'</span><span class="s1">;$(</span><span class="se">\'</span><span class="s1">empty</span><span class="se">\'</span><span class="s1">).hidden=count&gt;0;$(</span><span class="se">\'</span><span class="s1">stage</span><span class="se">\'</span><span class="s1">).textContent=state.stage+</span><span class="se">\'</span><span class="s1"> · </span><span class="se">\'</span><span class="s1">+(state.today||</span><span class="se">\'\'</span><span class="s1">);}</span><span class="se">\n</span><span class="s1">svg.onpointerdown=e=&gt;{if(e.button!==0)return;svg.setPointerCapture(e.pointerId);drag={start:point(e),old:{...pan},moved:false}};</span><span class="se">\n</span><span class="s1">svg.onpointermove=e=&gt;{if(!drag)return;const p=point(e),dx=p.x-drag.start.x,dy=p.y-drag.start.y;if(Math.hypot(dx,dy)&gt;3)drag.moved=true;if(drag.id){const n=nodes.get(drag.id);if(!n)return;n.x=drag.old.x+dx/zoom;n.y=drag.old.y+dy/zoom;n.el.setAttribute(</span><span class="se">\'</span><span class="s1">transform</span><span class="se">\'</span><span class="s1">,`translate($</span><span class="si">{n.x}</span><span class="s1"> $</span><span class="si">{n.y}</span><span class="s1">)`)}else{pan={x:drag.old.x+dx,y:drag.old.y+dy};transform()}};</span><span class="se">\n</span><span class="s1">svg.onpointerup=e=&gt;{if(drag&amp;&amp;!drag.moved)select(drag.id||null);drag=null};svg.onpointercancel=()=&gt;{drag=null};svg.addEventListener(</span><span class="se">\'</span><span class="s1">wheel</span><span class="se">\'</span><span class="s1">,e=&gt;{e.preventDefault();changeZoom(Math.exp(-e.deltaY*.0015),point(e))},{passive:false});</span><span class="se">\n</span><span class="s1">$(</span><span class="se">\'</span><span class="s1">plus</span><span class="se">\'</span><span class="s1">).onclick=()=&gt;changeZoom(1.2);$(</span><span class="se">\'</span><span class="s1">minus</span><span class="se">\'</span><span class="s1">).onclick=()=&gt;changeZoom(1/1.2);$(</span><span class="se">\'</span><span class="s1">fit</span><span class="se">\'</span><span class="s1">).onclick=()=&gt;{zoom=1;pan={x:0,y:0};transform()};$(</span><span class="se">\'</span><span class="s1">close</span><span class="se">\'</span><span class="s1">).onclick=()=&gt;select(null);document.addEventListener(</span><span class="se">\'</span><span class="s1">keydown</span><span class="se">\'</span><span class="s1">,e=&gt;{if(e.key===</span><span class="se">\'</span><span class="s1">Escape</span><span class="se">\'</span><span class="s1">)select(null)});$(</span><span class="se">\'</span><span class="s1">category</span><span class="se">\'</span><span class="s1">).onchange=$(</span><span class="se">\'</span><span class="s1">history</span><span class="se">\'</span><span class="s1">).onchange=()=&gt;{if(state)render(state)};</span><span class="se">\n</span><span class="s1">async function poll(){try{const response=await fetch(</span><span class="se">\'</span><span class="s1">state</span><span class="se">\'</span><span class="s1">,{cache:</span><span class="se">\'</span><span class="s1">no-store</span><span class="se">\'</span><span class="s1">,signal:AbortSignal.timeout(3000)});if(!response.ok)throw Error();const next=await response.json(),signature=JSON.stringify([next.stage,next.today,next.records]);if(signature!==lastSignature&amp;&amp;!drag){lastSignature=signature;render(next)}$(</span><span class="se">\'</span><span class="s1">connection</span><span class="se">\'</span><span class="s1">).textContent=</span><span class="se">\'</span><span class="s1">● Na żywo</span><span class="se">\'</span><span class="s1">;$(</span><span class="se">\'</span><span class="s1">connection</span><span class="se">\'</span><span class="s1">).style.color=</span><span class="se">\'</span><span class="s1">var(--green)</span><span class="se">\'</span><span class="s1">}catch{$(</span><span class="se">\'</span><span class="s1">connection</span><span class="se">\'</span><span class="s1">).textContent=</span><span class="se">\'</span><span class="s1">○ Brak połączenia · ostatni stan</span><span class="se">\'</span><span class="s1">;$(</span><span class="se">\'</span><span class="s1">connection</span><span class="se">\'</span><span class="s1">).style.color=</span><span class="se">\'</span><span class="s1">var(--gold)</span><span class="se">\'</span><span class="s1">}setTimeout(poll,500)}</span><span class="se">\n</span><span class="s1">if(location.protocol===</span><span class="se">\'</span><span class="s1">file:</span><span class="se">\'</span><span class="s1">){$(</span><span class="se">\'</span><span class="s1">connection</span><span class="se">\'</span><span class="s1">).textContent=</span><span class="se">\'</span><span class="s1">Podgląd pliku</span><span class="se">\'</span><span class="s1">;$(</span><span class="se">\'</span><span class="s1">empty</span><span class="se">\'</span><span class="s1">).textContent=</span><span class="se">\'</span><span class="s1">Otwórz link „Pamięć na żywo” z notebooka.</span><span class="se">\'</span><span class="s1">}else{poll()}</span><span class="se">\n</span><span class="s1">&lt;/script&gt;&lt;/html&gt;</span><span class="se">\n</span><span class="s1">'</span>
@@ -8238,7 +8313,7 @@ Puste query jest błędem, nie skrótem do pobrania całej pamięci.</p>
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [9]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">lru_cache</span>
@@ -8278,7 +8353,7 @@ Puste query jest błędem, nie skrótem do pobrania całej pamięci.</p>
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [10]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">memories</span> <span class="o">=</span> <span class="p">[]</span>
@@ -8303,7 +8378,7 @@ Puste query jest błędem, nie skrótem do pobrania całej pamięci.</p>
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [11]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">panel</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="s1">'1 · Tekst'</span><span class="p">)</span>
@@ -8312,127 +8387,17 @@ Puste query jest błędem, nie skrótem do pobrania całej pamięci.</p>
 </div>
 </div>
 </div></details>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=stage-1-demo">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=stage-1-demo">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [12]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">agent</span> <span class="o">=</span> <span class="n">make_agent</span><span class="p">(</span><span class="n">save_memory</span><span class="p">,</span> <span class="n">search_memory</span><span class="p">,</span> <span class="n">backend</span><span class="p">)</span>
-<span class="n">ask</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="s2">"Na delegacje najchętniej jeżdżę pociągiem. Mogę wtedy spokojnie popracować."</span><span class="p">,</span>
-    <span class="n">thread</span><span class="o">=</span><span class="s2">"deklaracja"</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"text_save"</span><span class="p">)</span>
-<span class="n">ask</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="s2">"W hotelach zależy mi na ciszy. Śniadania jem wegetariańskie, a raport wydatków zazwyczaj wysyłam w piątki."</span><span class="p">,</span>
-    <span class="n">thread</span><span class="o">=</span><span class="s2">"deklaracja"</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"other_preferences"</span><span class="p">)</span>
-<span class="n">ask</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="s2">"Jak najchętniej dojeżdżam na delegacje?"</span><span class="p">,</span>
-    <span class="n">thread</span><span class="o">=</span><span class="s2">"nowa-rozmowa"</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"text_recall"</span><span class="p">)</span>
+<span class="n">open_chat</span><span class="p">(</span><span class="n">agent</span><span class="p">)</span>
 </pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p><strong>Wiadomość:</strong> Na delegacje najchętniej jeżdżę pociągiem. Mogę wtedy spokojnie popracować.</p>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<p><b>save_memory</b> · success</p><pre>{"text": "Użytkownik preferuje podróże służbowe pociągiem, ponieważ może wtedy spokojnie popracować."}</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<details><summary>Wynik zapisu / szczegóły</summary><pre>"Użytkownik preferuje podróże służbowe pociągiem, ponieważ może wtedy spokojnie popracować."</pre></details>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p><strong>Odpowiedź modelu:</strong></p>
-<p>Zapamiętałam, że preferujesz podróże służbowe pociągiem, ponieważ możesz wtedy spokojnie popracować. W przyszłości będę brać to pod uwagę przy rekomendacjach.</p>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p><strong>Wiadomość:</strong> W hotelach zależy mi na ciszy. Śniadania jem wegetariańskie, a raport wydatków zazwyczaj wysyłam w piątki.</p>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<p><b>save_memory</b> · success</p><pre>{"text": "Użytkownik preferuje ciche hotele podczas podróży służbowych."}</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<details><summary>Wynik zapisu / szczegóły</summary><pre>"Użytkownik preferuje ciche hotele podczas podróży służbowych."</pre></details>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<p><b>save_memory</b> · success</p><pre>{"text": "Użytkownik preferuje wegetariańskie śniadania w hotelach."}</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<details><summary>Wynik zapisu / szczegóły</summary><pre>"Użytkownik preferuje wegetariańskie śniadania w hotelach."</pre></details>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<p><b>save_memory</b> · success</p><pre>{"text": "Użytkownik zazwyczaj wysyła raport wydatków w piątki."}</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<details><summary>Wynik zapisu / szczegóły</summary><pre>"Użytkownik zazwyczaj wysyła raport wydatków w piątki."</pre></details>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p><strong>Odpowiedź modelu:</strong></p>
-<p>Zapamiętałam: preferujesz ciche hotele, wegetariańskie śniadania oraz zwykle wysyłasz raport wydatków w piątki. Będę uwzględniać te preferencje przy kolejnych rekomendacjach.</p>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p><strong>Wiadomość:</strong> Jak najchętniej dojeżdżam na delegacje?</p>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<p><b>search_memory</b> · success</p><pre>{"query": "preferowany środek transportu na delegacje"}</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<ul><li>Użytkownik preferuje podróże służbowe pociągiem, ponieważ może wtedy spokojnie popracować.</li><li>Użytkownik preferuje ciche hotele podczas podróży służbowych.</li><li>Użytkownik preferuje wegetariańskie śniadania w hotelach.</li></ul>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p><strong>Odpowiedź modelu:</strong></p>
-<p>Najchętniej dojeżdżasz na delegacje pociągiem, ponieważ możesz wtedy spokojnie popracować.</p>
 </div>
 </div>
 </div>
@@ -8456,7 +8421,7 @@ Ponownie przekazujemy fakty w rozmowie. Model wybiera kategorię i argumenty zap
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [13]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">Category</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">'preference'</span><span class="p">,</span> <span class="s1">'company_policy'</span><span class="p">]</span>
@@ -8484,7 +8449,7 @@ Ponownie przekazujemy fakty w rozmowie. Model wybiera kategorię i argumenty zap
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [14]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">panel</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="s1">'2 · Kategorie'</span><span class="p">)</span>
@@ -8493,94 +8458,17 @@ Ponownie przekazujemy fakty w rozmowie. Model wybiera kategorię i argumenty zap
 </div>
 </div>
 </div></details>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=stage-2-demo">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=stage-2-demo">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [15]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">agent</span> <span class="o">=</span> <span class="n">make_agent</span><span class="p">(</span><span class="n">save_memory</span><span class="p">,</span> <span class="n">search_memory</span><span class="p">,</span> <span class="n">backend</span><span class="p">)</span>
-<span class="n">ask</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="s2">"Zwykle wybieram pociąg na delegacje. U nas w firmie można też latać samolotem."</span><span class="p">,</span>
-    <span class="n">thread</span><span class="o">=</span><span class="s2">"kategorie-zapis"</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"category_seed"</span><span class="p">)</span>
-<span class="n">ask</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="s2">"Odczytaj tylko moje zapisane preferencje dotyczące podróży."</span><span class="p">,</span>
-    <span class="n">thread</span><span class="o">=</span><span class="s2">"kategorie"</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"category_recall"</span><span class="p">)</span>
+<span class="n">open_chat</span><span class="p">(</span><span class="n">agent</span><span class="p">)</span>
 </pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p><strong>Wiadomość:</strong> Zwykle wybieram pociąg na delegacje. U nas w firmie można też latać samolotem.</p>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<p><b>save_memory</b> · success</p><pre>{"text": "Zwykle wybieram pociąg na delegacje.", "category": "preference"}</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<details><summary>Wynik zapisu / szczegóły</summary><pre>{
-  "text": "Zwykle wybieram pociąg na delegacje.",
-  "category": "preference"
-}</pre></details>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<p><b>save_memory</b> · success</p><pre>{"text": "W firmie dozwolone są podróże służbowe pociągiem i samolotem.", "category": "company_policy"}</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<details><summary>Wynik zapisu / szczegóły</summary><pre>{
-  "text": "W firmie dozwolone są podróże służbowe pociągiem i samolotem.",
-  "category": "company_policy"
-}</pre></details>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p><strong>Odpowiedź modelu:</strong></p>
-<p>Zarejestrowałem, że preferujesz podróże pociągiem na delegacje, a w Twojej firmie dozwolone są podróże służbowe zarówno pociągiem, jak i samolotem. Jeśli będziesz potrzebować rekomendacji, uwzględnię te informacje.</p>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p><strong>Wiadomość:</strong> Odczytaj tylko moje zapisane preferencje dotyczące podróży.</p>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<p><b>search_memory</b> · success</p><pre>{"query": "preferencje dotyczące podróży", "category": "preference"}</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<table><thead><tr><th>category</th><th>text</th></tr></thead><tbody><tr><td>preference</td><td>Zwykle wybieram pociąg na delegacje.</td></tr></tbody></table>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p><strong>Odpowiedź modelu:</strong></p>
-<p>Twoja zapisana preferencja dotycząca podróży: zwykle wybierasz pociąg na delegacje.</p>
 </div>
 </div>
 </div>
@@ -8597,71 +8485,14 @@ Ponownie przekazujemy fakty w rozmowie. Model wybiera kategorię i argumenty zap
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=duplicate-preferences">
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=duplicate-preferences">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [16]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">ask</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="s2">"Po kilku długich przejazdach zmieniłem zdanie. Teraz na delegacje wolę latać, nie tylko na ten najbliższy wyjazd."</span><span class="p">,</span>
-    <span class="n">thread</span><span class="o">=</span><span class="s2">"zmiana-bez-klucza"</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"category_update"</span><span class="p">)</span>
-<span class="n">show_facts</span><span class="p">(</span><span class="n">search_memory</span><span class="p">(</span><span class="s2">"preferowany transport"</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="s2">"preference"</span><span class="p">))</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p><strong>Wiadomość:</strong> Po kilku długich przejazdach zmieniłem zdanie. Teraz na delegacje wolę latać, nie tylko na ten najbliższy wyjazd.</p>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<p><b>search_memory</b> · success</p><pre>{"query": "preferowany środek transportu", "category": "preference"}</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<table><thead><tr><th>category</th><th>text</th></tr></thead><tbody><tr><td>preference</td><td>Zwykle wybieram pociąg na delegacje.</td></tr></tbody></table>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<p><b>save_memory</b> · success</p><pre>{"text": "W delegacje wolę latać samolotem.", "category": "preference"}</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<details><summary>Wynik zapisu / szczegóły</summary><pre>{
-  "text": "W delegacje wolę latać samolotem.",
-  "category": "preference"
-}</pre></details>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p><strong>Odpowiedź modelu:</strong></p>
-<p>Zapamiętałem: od teraz preferujesz latanie samolotem na delegacje.</p>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<table><thead><tr><th>category</th><th>text</th></tr></thead><tbody><tr><td>preference</td><td>Zwykle wybieram pociąg na delegacje.</td></tr><tr><td>preference</td><td>W delegacje wolę latać samolotem.</td></tr></tbody></table>
-</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<p>W czacie etapu 2 zmień preferencję transportu. Sprawdź w panelu, czy poprzedni fakt został zastąpiony, czy dopisaliśmy drugi.</p>
 </div>
 </div>
 </div>
@@ -8683,7 +8514,7 @@ Zamieniamy listę na słownik indeksowany przez <code>(category, key)</code>.</p
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [17]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">memories</span> <span class="o">=</span> <span class="p">{}</span>
@@ -8712,7 +8543,7 @@ Zamieniamy listę na słownik indeksowany przez <code>(category, key)</code>.</p
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [18]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">panel</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="s1">'3 · Aktualizacja'</span><span class="p">)</span>
@@ -8721,108 +8552,17 @@ Zamieniamy listę na słownik indeksowany przez <code>(category, key)</code>.</p
 </div>
 </div>
 </div></details>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=stage-3-demo">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=stage-3-demo">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [19]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">agent</span> <span class="o">=</span> <span class="n">make_agent</span><span class="p">(</span><span class="n">save_memory</span><span class="p">,</span> <span class="n">search_memory</span><span class="p">,</span> <span class="n">backend</span><span class="p">)</span>
-<span class="n">ask</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="s2">"Na delegacje najbardziej odpowiada mi pociąg."</span><span class="p">,</span>
-    <span class="n">thread</span><span class="o">=</span><span class="s2">"preferencja"</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"key_seed"</span><span class="p">)</span>
-<span class="n">ask</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="s2">"Po kilku długich przejazdach zmieniłem zdanie. Teraz na delegacje wolę latać, nie tylko na ten najbliższy wyjazd."</span><span class="p">,</span>
-    <span class="n">thread</span><span class="o">=</span><span class="s2">"aktualizacja"</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"key_update"</span><span class="p">)</span>
+<span class="n">open_chat</span><span class="p">(</span><span class="n">agent</span><span class="p">)</span>
 </pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p><strong>Wiadomość:</strong> Na delegacje najbardziej odpowiada mi pociąg.</p>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<p><b>search_memory</b> · success</p><pre>{"query": "preferowany środek transportu", "category": "preference"}</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<p><em>Brak dopasowanych wspomnień.</em></p>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<p><b>save_memory</b> · success</p><pre>{"key": "preferowany środek transportu", "text": "Najbardziej odpowiada mi podróżowanie pociągiem na delegacje.", "category": "preference"}</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<details><summary>Wynik zapisu / szczegóły</summary><pre>{
-  "key": "preferowany środek transportu",
-  "text": "Najbardziej odpowiada mi podróżowanie pociągiem na delegacje.",
-  "category": "preference"
-}</pre></details>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p><strong>Odpowiedź modelu:</strong></p>
-<p>Zapamiętałam, że na delegacje najbardziej odpowiada Ci podróżowanie pociągiem. W przyszłości będę to uwzględniać przy rekomendacjach.</p>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p><strong>Wiadomość:</strong> Po kilku długich przejazdach zmieniłem zdanie. Teraz na delegacje wolę latać, nie tylko na ten najbliższy wyjazd.</p>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<p><b>search_memory</b> · success</p><pre>{"query": "preferowany środek transportu", "category": "preference"}</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<table><thead><tr><th>category</th><th>key</th><th>text</th></tr></thead><tbody><tr><td>preference</td><td>preferowany środek transportu</td><td>Najbardziej odpowiada mi podróżowanie pociągiem na delegacje.</td></tr></tbody></table>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<p><b>save_memory</b> · success</p><pre>{"key": "preferowany środek transportu", "text": "Na delegacje wolę latać samolotem.", "category": "preference"}</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<details><summary>Wynik zapisu / szczegóły</summary><pre>{
-  "key": "preferowany środek transportu",
-  "text": "Na delegacje wolę latać samolotem.",
-  "category": "preference"
-}</pre></details>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p><strong>Odpowiedź modelu:</strong></p>
-<p>Zapisałem: na delegacje wolisz latać samolotem. Będę to uwzględniać przy kolejnych rekomendacjach.</p>
 </div>
 </div>
 </div>
@@ -8839,116 +8579,14 @@ Zamieniamy listę na słownik indeksowany przez <code>(category, key)</code>.</p
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=upsert-loses-time">
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=upsert-loses-time">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [20]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">ask</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="s2">"Sprawdziłem politykę firmy: w delegacjach dopuszczamy pociąg i samolot."</span><span class="p">,</span>
-    <span class="n">thread</span><span class="o">=</span><span class="s2">"regula"</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"key_policy_seed"</span><span class="p">)</span>
-<span class="n">ask</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="s2">"Przyszedł mail z firmy: od 15 września 2026 do końca września w delegacjach dopuszczamy wyłącznie pociąg."</span><span class="p">,</span>
-    <span class="n">thread</span><span class="o">=</span><span class="s2">"nowa-regula"</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"key_policy_update"</span><span class="p">)</span>
-<span class="c1"># This version cannot retrieve the previous policy for September 13.</span>
-<span class="n">show_facts</span><span class="p">(</span><span class="n">search_memory</span><span class="p">(</span><span class="s2">"dozwolony transport"</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="s2">"company_policy"</span><span class="p">))</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p><strong>Wiadomość:</strong> Sprawdziłem politykę firmy: w delegacjach dopuszczamy pociąg i samolot.</p>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<p><b>search_memory</b> · success</p><pre>{"query": "dopuszczalne środki transportu", "category": "company_policy"}</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<p><em>Brak dopasowanych wspomnień.</em></p>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<p><b>save_memory</b> · success</p><pre>{"key": "dopuszczalne środki transportu", "text": "W delegacjach firmowych dopuszczalne są podróże pociągiem i samolotem.", "category": "company_policy"}</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<details><summary>Wynik zapisu / szczegóły</summary><pre>{
-  "key": "dopuszczalne środki transportu",
-  "text": "W delegacjach firmowych dopuszczalne są podróże pociągiem i samolotem.",
-  "category": "company_policy"
-}</pre></details>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p><strong>Odpowiedź modelu:</strong></p>
-<p>Zgodnie z polityką firmy, w delegacjach możesz korzystać z pociągu i samolotu.</p>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p><strong>Wiadomość:</strong> Przyszedł mail z firmy: od 15 września 2026 do końca września w delegacjach dopuszczamy wyłącznie pociąg.</p>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<p><b>search_memory</b> · success</p><pre>{"query": "dopuszczalne środki transportu", "category": "company_policy"}</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<table><thead><tr><th>category</th><th>key</th><th>text</th></tr></thead><tbody><tr><td>company_policy</td><td>dopuszczalne środki transportu</td><td>W delegacjach firmowych dopuszczalne są podróże pociągiem i samolotem.</td></tr></tbody></table>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<p><b>save_memory</b> · success</p><pre>{"key": "dopuszczalne środki transportu", "text": "W delegacjach firmowych od 2026-09-15 do 2026-10-01 dopuszczamy wyłącznie podróże pociągiem.", "category": "company_policy"}</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<details><summary>Wynik zapisu / szczegóły</summary><pre>{
-  "key": "dopuszczalne środki transportu",
-  "text": "W delegacjach firmowych od 2026-09-15 do 2026-10-01 dopuszczamy wyłącznie podróże pociągiem.",
-  "category": "company_policy"
-}</pre></details>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p><strong>Odpowiedź modelu:</strong></p>
-<p>Od 15 września do końca września 2026 w delegacjach firmowych można korzystać wyłącznie z pociągów.</p>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<table><thead><tr><th>category</th><th>key</th><th>text</th></tr></thead><tbody><tr><td>company_policy</td><td>dopuszczalne środki transportu</td><td>W delegacjach firmowych od 2026-09-15 do 2026-10-01 dopuszczamy wyłącznie podróże pociągiem.</td></tr></tbody></table>
-</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<p>Kontynuuj rozmowę w czacie etapu 3: wprowadź zasady firmy, a następnie ich zmianę obowiązującą od przyszłej daty. Sprawdź w panelu, co pozostało z wcześniejszej zasady.</p>
 </div>
 </div>
 </div>
@@ -8971,7 +8609,7 @@ Jeszcze <strong>nie zapisujemy, kiedy dowiedzieliśmy się o zmianie</strong>.</
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [21]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">as_day</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
@@ -9012,7 +8650,7 @@ Jeszcze <strong>nie zapisujemy, kiedy dowiedzieliśmy się o zmianie</strong>.</
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [22]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">memories</span> <span class="o">=</span> <span class="p">[]</span>
@@ -9061,7 +8699,7 @@ Jeszcze <strong>nie zapisujemy, kiedy dowiedzieliśmy się o zmianie</strong>.</
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [23]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">panel</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="s1">'4 · Czas obowiązywania'</span><span class="p">)</span>
@@ -9070,160 +8708,17 @@ Jeszcze <strong>nie zapisujemy, kiedy dowiedzieliśmy się o zmianie</strong>.</
 </div>
 </div>
 </div></details>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=stage-4-demo">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=stage-4-demo">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [24]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">agent</span> <span class="o">=</span> <span class="n">make_agent</span><span class="p">(</span><span class="n">save_memory</span><span class="p">,</span> <span class="n">search_memory</span><span class="p">,</span> <span class="n">backend</span><span class="p">)</span>
-<span class="n">ask</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="s2">"W polityce podróży mamy pociąg i samolot. Te zasady obowiązują od 1 września 2026."</span><span class="p">,</span>
-    <span class="n">thread</span><span class="o">=</span><span class="s2">"rozmowa-etap-4"</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"valid_policy_seed"</span><span class="p">)</span>
-<span class="n">ask</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="s2">"Przyszedł mail z firmy: od 15 września 2026 do końca września w delegacjach dopuszczamy wyłącznie pociąg."</span><span class="p">,</span>
-    <span class="n">thread</span><span class="o">=</span><span class="s2">"rozmowa-etap-4"</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"valid_policy_update"</span><span class="p">)</span>
-<span class="n">ask</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="s2">"Od 5 września 2026 wolę latać na delegacje. To moja nowa stała preferencja."</span><span class="p">,</span>
-    <span class="n">thread</span><span class="o">=</span><span class="s2">"rozmowa-etap-4"</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"valid_preference"</span><span class="p">)</span>
-<span class="n">ask</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="s2">"Jaki transport proponujesz na delegację do Krakowa 2026-09-13? Uwzględnij preferencje i zasady firmy."</span><span class="p">,</span>
-    <span class="n">thread</span><span class="o">=</span><span class="s2">"waznosc"</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"valid_recall"</span><span class="p">)</span>
+<span class="n">open_chat</span><span class="p">(</span><span class="n">agent</span><span class="p">)</span>
 </pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p><strong>Wiadomość:</strong> W polityce podróży mamy pociąg i samolot. Te zasady obowiązują od 1 września 2026.</p>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<p><b>save_memory</b> · success</p><pre>{"key": "dozwolone środki transportu", "text": "W polityce podróży służbowych dozwolone są pociąg i samolot.", "category": "company_policy", "valid_from": "2026-09-01"}</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<details><summary>Wynik zapisu / szczegóły</summary><pre>{
-  "key": "dozwolone środki transportu",
-  "text": "W polityce podróży służbowych dozwolone są pociąg i samolot.",
-  "category": "company_policy",
-  "valid_from": "2026-09-01",
-  "valid_to": null
-}</pre></details>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p><strong>Odpowiedź modelu:</strong></p>
-<p>W polityce podróży służbowych od 1 września 2026 dozwolone są pociąg i samolot.</p>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p><strong>Wiadomość:</strong> Przyszedł mail z firmy: od 15 września 2026 do końca września w delegacjach dopuszczamy wyłącznie pociąg.</p>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<p><b>save_memory</b> · success</p><pre>{"key": "dozwolone środki transportu", "text": "W delegacjach dopuszczalny jest wyłącznie pociąg.", "category": "company_policy", "valid_from": "2026-09-15", "valid_to": "2026-10-01"}</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<details><summary>Wynik zapisu / szczegóły</summary><pre>{
-  "key": "dozwolone środki transportu",
-  "text": "W delegacjach dopuszczalny jest wyłącznie pociąg.",
-  "category": "company_policy",
-  "valid_from": "2026-09-15",
-  "valid_to": "2026-10-01"
-}</pre></details>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p><strong>Odpowiedź modelu:</strong></p>
-<p>Od 15 września do końca września 2026 w delegacjach służbowych dozwolony jest wyłącznie pociąg.</p>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p><strong>Wiadomość:</strong> Od 5 września 2026 wolę latać na delegacje. To moja nowa stała preferencja.</p>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<p><b>save_memory</b> · success</p><pre>{"key": "preferowany środek transportu", "text": "W delegacjach preferuję podróżowanie samolotem.", "category": "preference", "valid_from": "2026-09-05"}</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<details><summary>Wynik zapisu / szczegóły</summary><pre>{
-  "key": "preferowany środek transportu",
-  "text": "W delegacjach preferuję podróżowanie samolotem.",
-  "category": "preference",
-  "valid_from": "2026-09-05",
-  "valid_to": null
-}</pre></details>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p><strong>Odpowiedź modelu:</strong></p>
-<p>Twoja stała preferencja to podróżowanie samolotem na delegacje (od 5 września 2026).</p>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p><strong>Wiadomość:</strong> Jaki transport proponujesz na delegację do Krakowa 2026-09-13? Uwzględnij preferencje i zasady firmy.</p>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<p><b>search_memory</b> · success</p><pre>{"query": "preferowany środek transportu", "valid_on": "2026-09-13", "category": "preference"}</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<table><thead><tr><th>category</th><th>key</th><th>text</th><th>valid_from</th><th>valid_to</th></tr></thead><tbody><tr><td>preference</td><td>preferowany środek transportu</td><td>W delegacjach preferuję podróżowanie samolotem.</td><td>2026-09-05</td><td>∞</td></tr></tbody></table>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<p><b>search_memory</b> · success</p><pre>{"query": "dozwolone środki transportu", "valid_on": "2026-09-13", "category": "company_policy"}</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<table><thead><tr><th>category</th><th>key</th><th>text</th><th>valid_from</th><th>valid_to</th></tr></thead><tbody><tr><td>company_policy</td><td>dozwolone środki transportu</td><td>W polityce podróży służbowych dozwolone są pociąg i samolot.</td><td>2026-09-01</td><td>2026-09-15</td></tr></tbody></table>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p><strong>Odpowiedź modelu:</strong></p>
-<p>Na delegację do Krakowa 13 września 2026 roku proponuję podróż samolotem, ponieważ jest to Twój preferowany środek transportu i jest zgodny z polityką firmy (dozwolone są pociąg i samolot).</p>
 </div>
 </div>
 </div>
@@ -9242,62 +8737,14 @@ Aktualizujemy historię obowiązywania i ponownie pytamy o 13 IX.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=valid-correction">
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=valid-correction">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [25]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">ask</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="s2">"HR właśnie sprostował maila: tylko pociąg obowiązuje od 12 września 2026, nie od 15. Koniec nadal wypada z końcem września."</span><span class="p">,</span>
-    <span class="n">thread</span><span class="o">=</span><span class="s2">"rozmowa-etap-4"</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"valid_correction"</span><span class="p">)</span>
-<span class="n">show_facts</span><span class="p">(</span><span class="n">search_memory</span><span class="p">(</span><span class="s2">"dozwolony transport"</span><span class="p">,</span> <span class="s2">"2026-09-13"</span><span class="p">,</span> <span class="s2">"company_policy"</span><span class="p">))</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p><strong>Wiadomość:</strong> HR właśnie sprostował maila: tylko pociąg obowiązuje od 12 września 2026, nie od 15. Koniec nadal wypada z końcem września.</p>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<p><b>save_memory</b> · success</p><pre>{"key": "dozwolone środki transportu", "text": "W delegacjach dopuszczalny jest wyłącznie pociąg.", "category": "company_policy", "valid_from": "2026-09-12", "valid_to": "2026-10-01"}</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<details><summary>Wynik zapisu / szczegóły</summary><pre>{
-  "key": "dozwolone środki transportu",
-  "text": "W delegacjach dopuszczalny jest wyłącznie pociąg.",
-  "category": "company_policy",
-  "valid_from": "2026-09-12",
-  "valid_to": "2026-10-01"
-}</pre></details>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p><strong>Odpowiedź modelu:</strong></p>
-<p>Sprostowanie: od 12 września do końca września 2026 w delegacjach służbowych dozwolony jest wyłącznie pociąg.</p>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<table><thead><tr><th>category</th><th>key</th><th>text</th><th>valid_from</th><th>valid_to</th></tr></thead><tbody><tr><td>company_policy</td><td>dozwolone środki transportu</td><td>W delegacjach dopuszczalny jest wyłącznie pociąg.</td><td>2026-09-12</td><td>2026-10-01</td></tr></tbody></table>
-</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<p>W czacie etapu 4 sprostuj początek obowiązywania zasady. Następnie rozpocznij nową rozmowę i zapytaj o wyjazd sprzed korekty.</p>
 </div>
 </div>
 </div>
@@ -9321,7 +8768,7 @@ Do wyszukiwania dodajemy <code>known_on</code> — według wiedzy z którego dni
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [26]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">memories</span> <span class="o">=</span> <span class="p">[]</span>
@@ -9383,7 +8830,7 @@ Do wyszukiwania dodajemy <code>known_on</code> — według wiedzy z którego dni
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [27]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">panel</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="s1">'5 · Czas wiedzy'</span><span class="p">)</span>
@@ -9404,293 +8851,29 @@ Do wyszukiwania dodajemy <code>known_on</code> — według wiedzy z którego dni
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=stage-5-demo">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=stage-5-demo">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [28]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">agent</span> <span class="o">=</span> <span class="n">make_agent</span><span class="p">(</span><span class="n">save_memory</span><span class="p">,</span> <span class="n">search_memory</span><span class="p">,</span> <span class="n">backend</span><span class="p">)</span>
-<span class="n">TODAY</span> <span class="o">=</span> <span class="s2">"2026-09-01"</span>
-<span class="n">ask</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="s2">"Dziś, 1 września 2026, weszła polityka podróży: firma dopuszcza pociąg i samolot w delegacjach."</span><span class="p">,</span>
-    <span class="n">thread</span><span class="o">=</span><span class="s2">"rozmowa-etap-5"</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"temporal_policy_seed"</span><span class="p">)</span>
-<span class="n">TODAY</span> <span class="o">=</span> <span class="s2">"2026-09-05"</span>
-<span class="n">ask</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="s2">"Od 5 września 2026 moim stałym wyborem na delegacje jest samolot. Pociągi zabierają mi za dużo czasu."</span><span class="p">,</span>
-    <span class="n">thread</span><span class="o">=</span><span class="s2">"rozmowa-etap-5"</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"temporal_preference"</span><span class="p">)</span>
-<span class="n">TODAY</span> <span class="o">=</span> <span class="s2">"2026-09-10"</span>
-<span class="n">ask</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="s2">"Przyszedł mail z firmy: od 15 września 2026 do końca września w delegacjach dopuszczamy wyłącznie pociąg."</span><span class="p">,</span>
-    <span class="n">thread</span><span class="o">=</span><span class="s2">"rozmowa-etap-5"</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"temporal_policy_update"</span><span class="p">)</span>
-<span class="n">TODAY</span> <span class="o">=</span> <span class="s2">"2026-09-20"</span>
-<span class="n">ask</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="s2">"HR właśnie sprostował maila: tylko pociąg obowiązuje od 12 września 2026, nie od 15. Koniec nadal wypada z końcem września."</span><span class="p">,</span>
-    <span class="n">thread</span><span class="o">=</span><span class="s2">"rozmowa-etap-5"</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"temporal_correction"</span><span class="p">)</span>
+<span class="n">open_chat</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">temporal</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 </div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p><strong>Wiadomość:</strong> Dziś, 1 września 2026, weszła polityka podróży: firma dopuszcza pociąg i samolot w delegacjach.</p>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<p><b>save_memory</b> · success</p><pre>{"key": "dozwolone środki transportu służbowego", "text": "Firma dopuszcza pociąg i samolot jako środki transportu służbowego.", "category": "company_policy", "valid_from": "2026-09-01"}</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<details><summary>Wynik zapisu / szczegóły</summary><pre>{
-  "key": "dozwolone środki transportu służbowego",
-  "text": "Firma dopuszcza pociąg i samolot jako środki transportu służbowego.",
-  "category": "company_policy",
-  "valid_from": "2026-09-01",
-  "valid_to": null,
-  "recorded_from": "2026-09-01",
-  "recorded_to": null
-}</pre></details>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p><strong>Odpowiedź modelu:</strong></p>
-<p>Od 1 września 2026 firma dopuszcza pociąg i samolot jako środki transportu służbowego.</p>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p><strong>Wiadomość:</strong> Od 5 września 2026 moim stałym wyborem na delegacje jest samolot. Pociągi zabierają mi za dużo czasu.</p>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<p><b>save_memory</b> · success</p><pre>{"key": "preferowany środek transportu w delegacjach", "text": "W delegacjach preferuję samolot jako środek transportu.", "category": "preference", "valid_from": "2026-09-05"}</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<details><summary>Wynik zapisu / szczegóły</summary><pre>{
-  "key": "preferowany środek transportu w delegacjach",
-  "text": "W delegacjach preferuję samolot jako środek transportu.",
-  "category": "preference",
-  "valid_from": "2026-09-05",
-  "valid_to": null,
-  "recorded_from": "2026-09-05",
-  "recorded_to": null
-}</pre></details>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p><strong>Odpowiedź modelu:</strong></p>
-<p>Zapisano: od 5 września 2026 Twoim preferowanym środkiem transportu w delegacjach jest samolot.</p>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p><strong>Wiadomość:</strong> Przyszedł mail z firmy: od 15 września 2026 do końca września w delegacjach dopuszczamy wyłącznie pociąg.</p>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<p><b>save_memory</b> · success</p><pre>{"key": "dozwolone środki transportu służbowego", "text": "W delegacjach dopuszczony jest wyłącznie pociąg jako środek transportu służbowego.", "category": "company_policy", "valid_from": "2026-09-15", "valid_to": "2026-10-01"}</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<details><summary>Wynik zapisu / szczegóły</summary><pre>{
-  "key": "dozwolone środki transportu służbowego",
-  "text": "W delegacjach dopuszczony jest wyłącznie pociąg jako środek transportu służbowego.",
-  "category": "company_policy",
-  "valid_from": "2026-09-15",
-  "valid_to": "2026-10-01",
-  "recorded_from": "2026-09-10",
-  "recorded_to": null
-}</pre></details>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p><strong>Odpowiedź modelu:</strong></p>
-<p>Od 15 września do końca września 2026 w delegacjach firmowych dozwolony jest wyłącznie pociąg jako środek transportu.</p>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p><strong>Wiadomość:</strong> HR właśnie sprostował maila: tylko pociąg obowiązuje od 12 września 2026, nie od 15. Koniec nadal wypada z końcem września.</p>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<p><b>save_memory</b> · success</p><pre>{"key": "dozwolone środki transportu służbowego", "text": "W delegacjach dopuszczony jest wyłącznie pociąg jako środek transportu służbowego.", "category": "company_policy", "valid_from": "2026-09-12", "valid_to": "2026-10-01"}</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<details><summary>Wynik zapisu / szczegóły</summary><pre>{
-  "key": "dozwolone środki transportu służbowego",
-  "text": "W delegacjach dopuszczony jest wyłącznie pociąg jako środek transportu służbowego.",
-  "category": "company_policy",
-  "valid_from": "2026-09-12",
-  "valid_to": "2026-10-01",
-  "recorded_from": "2026-09-20",
-  "recorded_to": null
-}</pre></details>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p><strong>Odpowiedź modelu:</strong></p>
-<p>Sprostowanie: wyłącznie pociąg jako środek transportu służbowego obowiązuje od 12 września do końca września 2026.</p>
-</div>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=temporal-answers">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=temporal-answers">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [29]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">ask</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span>
-    <span class="s2">"Odtwórz propozycję transportu do Krakowa na 2026-09-13 według wiedzy z 2026-09-18. Uwzględnij preferencje i zasady firmy."</span><span class="p">,</span>
-    <span class="n">thread</span><span class="o">=</span><span class="s2">"dawna-wiedza"</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">'old_knowledge'</span><span class="p">)</span>
-<span class="n">ask</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span>
-    <span class="s2">"Odtwórz propozycję transportu do Krakowa na 2026-09-13 według wiedzy z 2026-09-20. Uwzględnij preferencje i zasady firmy."</span><span class="p">,</span>
-    <span class="n">thread</span><span class="o">=</span><span class="s2">"nowa-wiedza"</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">'new_knowledge'</span><span class="p">)</span>
-<span class="n">ask</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="s2">"Jakie środki transportu firma dopuszcza na wyjazd 2026-10-01 według wiedzy z 2026-09-20?"</span><span class="p">,</span>
-    <span class="n">thread</span><span class="o">=</span><span class="s2">"po-zakonczeniu"</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"after_expiry"</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p><strong>Wiadomość:</strong> Odtwórz propozycję transportu do Krakowa na 2026-09-13 według wiedzy z 2026-09-18. Uwzględnij preferencje i zasady firmy.</p>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<p><b>search_memory</b> · success</p><pre>{"query": "preferowany środek transportu", "valid_on": "2026-09-13", "known_on": "2026-09-18", "category": "preference"}</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<table><thead><tr><th>category</th><th>key</th><th>text</th><th>valid_from</th><th>valid_to</th><th>recorded_from</th><th>recorded_to</th></tr></thead><tbody><tr><td>preference</td><td>preferowany środek transportu w delegacjach</td><td>W delegacjach preferuję samolot jako środek transportu.</td><td>2026-09-05</td><td>∞</td><td>2026-09-05</td><td>∞</td></tr></tbody></table>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<p><b>search_memory</b> · success</p><pre>{"query": "dozwolone środki transportu", "valid_on": "2026-09-13", "known_on": "2026-09-18", "category": "company_policy"}</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<table><thead><tr><th>category</th><th>key</th><th>text</th><th>valid_from</th><th>valid_to</th><th>recorded_from</th><th>recorded_to</th></tr></thead><tbody><tr><td>company_policy</td><td>dozwolone środki transportu służbowego</td><td>Firma dopuszcza pociąg i samolot jako środki transportu służbowego.</td><td>2026-09-01</td><td>2026-09-15</td><td>2026-09-10</td><td>2026-09-20</td></tr></tbody></table>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p><strong>Odpowiedź modelu:</strong></p>
-<p>Na dzień 2026-09-13, zgodnie z Twoją preferencją, preferowanym środkiem transportu w delegacjach był samolot. Zasady firmy dopuszczały wtedy zarówno pociąg, jak i samolot jako środki transportu służbowego. Propozycja transportu do Krakowa: samolot lub pociąg, z rekomendacją samolotu.</p>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p><strong>Wiadomość:</strong> Odtwórz propozycję transportu do Krakowa na 2026-09-13 według wiedzy z 2026-09-20. Uwzględnij preferencje i zasady firmy.</p>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<p><b>search_memory</b> · success</p><pre>{"query": "preferowany transport", "valid_on": "2026-09-13", "known_on": "2026-09-20", "category": "preference"}</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<table><thead><tr><th>category</th><th>key</th><th>text</th><th>valid_from</th><th>valid_to</th><th>recorded_from</th><th>recorded_to</th></tr></thead><tbody><tr><td>preference</td><td>preferowany środek transportu w delegacjach</td><td>W delegacjach preferuję samolot jako środek transportu.</td><td>2026-09-05</td><td>∞</td><td>2026-09-05</td><td>∞</td></tr></tbody></table>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<p><b>search_memory</b> · success</p><pre>{"query": "dozwolone środki transportu", "valid_on": "2026-09-13", "known_on": "2026-09-20", "category": "company_policy"}</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<table><thead><tr><th>category</th><th>key</th><th>text</th><th>valid_from</th><th>valid_to</th><th>recorded_from</th><th>recorded_to</th></tr></thead><tbody><tr><td>company_policy</td><td>dozwolone środki transportu służbowego</td><td>W delegacjach dopuszczony jest wyłącznie pociąg jako środek transportu służbowego.</td><td>2026-09-12</td><td>2026-10-01</td><td>2026-09-20</td><td>∞</td></tr></tbody></table>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p><strong>Odpowiedź modelu:</strong></p>
-<p>Na dzień 2026-09-13, zgodnie z polityką firmy, do Krakowa możesz podróżować wyłącznie pociągiem, mimo że preferujesz samolot. Propozycja transportu: pociąg.</p>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p><strong>Wiadomość:</strong> Jakie środki transportu firma dopuszcza na wyjazd 2026-10-01 według wiedzy z 2026-09-20?</p>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<p><b>search_memory</b> · success</p><pre>{"query": "dopuszczalne środki transportu", "valid_on": "2026-10-01", "known_on": "2026-09-20", "category": "company_policy"}</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<table><thead><tr><th>category</th><th>key</th><th>text</th><th>valid_from</th><th>valid_to</th><th>recorded_from</th><th>recorded_to</th></tr></thead><tbody><tr><td>company_policy</td><td>dozwolone środki transportu służbowego</td><td>Firma dopuszcza pociąg i samolot jako środki transportu służbowego.</td><td>2026-10-01</td><td>∞</td><td>2026-09-10</td><td>∞</td></tr></tbody></table>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p><strong>Odpowiedź modelu:</strong></p>
-<p>Na wyjazd 1 października 2026 firma dopuszcza pociąg i samolot jako środki transportu służbowego.</p>
-</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<p>Ustaw datę otrzymania na 20 września 2026. W osobnych nowych rozmowach zapytaj o wyjazd 13 września według wiedzy z 18 i 20 września. Potem sprawdź zasady dla 1 października. Datę wiedzy podaj w wiadomości; pole „Otrzymano” jest zegarem aplikacji.</p>
 </div>
 </div>
 </div>
@@ -9718,51 +8901,14 @@ Nie wymuszamy transportu w Pythonie i nie zakładamy, że błędny odczyt musi z
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=optional-code">
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=optional-code">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [30]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">ask</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span>
-    <span class="s2">"Napisz prostą funkcję Python odwracającą listę."</span><span class="p">,</span> <span class="n">thread</span><span class="o">=</span><span class="s2">"inne-zadanie"</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">'code_question'</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p><strong>Wiadomość:</strong> Napisz prostą funkcję Python odwracającą listę.</p>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p><em>Bez wywołań pamięci.</em></p>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p><strong>Odpowiedź modelu:</strong></p>
-<p>Oto prosta funkcja w Pythonie odwracająca listę:</p>
-<div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">odwroc_liste</span><span class="p">(</span><span class="n">lista</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">lista</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-</pre></div>
-<p>Możesz jej użyć tak:</p>
-<div class="highlight"><pre><span></span><span class="n">mojalista</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
-<span class="n">odwrocona</span> <span class="o">=</span> <span class="n">odwroc_liste</span><span class="p">(</span><span class="n">mojalista</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">odwrocona</span><span class="p">)</span>  <span class="c1"># Wynik: [4, 3, 2, 1]</span>
-</pre></div>
-</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<p>W nowej rozmowie poproś o zadanie niezwiązane z podróżami i sprawdź, czy agent użyje pamięci.</p>
 </div>
 </div>
 </div>
@@ -9773,30 +8919,18 @@ Nie wymuszamy transportu w Pythonie i nie zakładamy, że błędny odczyt musi z
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="Wiadomo%C5%9B%C4%87-od-sali">Wiadomość od sali<a class="anchor-link" href="#Wiadomo%C5%9B%C4%87-od-sali">¶</a></h3><p>Pracujemy na końcowej implementacji. Zmiany magazynu z tego eksperymentu cofamy po wykonaniu,
-żeby nie zmieniać zapisanych wyników głównej ścieżki.</p>
+<h3 id="Wiadomo%C5%9B%C4%87-od-sali">Wiadomość od sali<a class="anchor-link" href="#Wiadomo%C5%9B%C4%87-od-sali">¶</a></h3><p>Pracujemy na końcowej implementacji. Wiadomości wpisujemy w czacie. Zmiany magazynu pozostają dostępne w kolejnych rozmowach.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=audience">
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=audience">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [31]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">AUDIENCE_MESSAGE</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># enter a message in quotes</span>
-<span class="k">if</span> <span class="n">AUDIENCE_MESSAGE</span><span class="p">:</span>
-    <span class="n">before</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">memories</span><span class="p">)</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">audience_agent</span> <span class="o">=</span> <span class="n">make_agent</span><span class="p">(</span><span class="n">save_memory</span><span class="p">,</span> <span class="n">search_memory</span><span class="p">,</span> <span class="n">backend</span><span class="p">,</span> <span class="n">today</span><span class="o">=</span><span class="n">TODAY</span><span class="p">)</span>
-        <span class="n">ask</span><span class="p">(</span><span class="n">audience_agent</span><span class="p">,</span> <span class="n">AUDIENCE_MESSAGE</span><span class="p">,</span> <span class="n">thread</span><span class="o">=</span><span class="s2">"publicznosc"</span><span class="p">)</span>
-    <span class="k">finally</span><span class="p">:</span>
-        <span class="n">memories</span> <span class="o">=</span> <span class="n">before</span>
-        <span class="n">panel</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">tool</span><span class="o">=</span><span class="s2">"Przywrócenie pamięci"</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="s2">"success"</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">{},</span> <span class="n">result</span><span class="o">=</span><span class="kc">None</span><span class="p">))</span>
-</pre></div>
-</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<p>Wpisz własne pytanie do czatu aktualnego etapu. Zmiany pamięci pozostają w magazynie — aby zacząć od początku, wykonaj ponownie definicję etapu i otwórz jego czat.</p>
 </div>
 </div>
 </div>
@@ -9818,9 +8952,9 @@ Nie wymuszamy transportu w Pythonie i nie zakładamy, że błędny odczyt musi z
 <li>Kategorie, klucze i filtry pokaż bezpośrednio jako kolejne rozszerzenia. Dyskusję zostaw przy konsekwencjach projektu: jaki stan wiedzy odtwarzamy i do czego go użyjemy. Uczestnicy mogą zakwestionować przyjęte założenia.</li>
 <li>Każda komórka definicji etapu resetuje <code>memories</code>. Wykonaj jej demonstrację, aby odtworzyć wejścia. Nie uruchamiaj starego demo z funkcjami późniejszego etapu; nie zachowuj starych agentów po zmianie definicji.</li>
 <li>Po zmianie funkcji wywołaj ponownie <code>make_agent</code>: schematy narzędzi muszą odpowiadać nowym argumentom.</li>
-<li>Przy API niedostępnym po jednej próbie otwórz HTML i nazwij go zapisem poprzedniego wykonania.</li>
+<li>Przy API niedostępnym przejdź do omówienia kodu. Statyczny HTML nie zawiera działającego czatu ani zapisu nowych odpowiedzi.</li>
 <li>Nie czytaj całego zapisu bitemporalnego: wskaż zamknięcie <code>recorded_to</code>, zachowanie dawnej ważności i dwa warunki odczytu.</li>
-<li>Próba na głos ze stoperem nadal jest potrzebna. Rozpiska nie jest zmierzoną długością prezentacji.</li>
+<li>Przed pokazem przećwicz rozmowę i sprawdź odpowiedzi oraz zapisane fakty.</li>
 </ul>
 <p><a href="https://martinfowler.com/articles/bitemporal-history.html">Bitemporal History</a> · <a href="https://docs.langchain.com/oss/python/langgraph/quickstart">LangGraph — narzędzia</a></p>
 </div>

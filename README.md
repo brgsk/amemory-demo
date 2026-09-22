@@ -6,13 +6,13 @@ Rozwijamy dwie funkcje — `save_memory` i `search_memory` — oraz sprawdzamy i
 
 ## Materiały
 
-- [Notebook](agent_memory_workshop.ipynb) — kod, objaśnienia i zapisane odpowiedzi modelu.
-- [Zapis przebiegu HTML](agent_memory_workshop.html) — pobierz i otwórz w przeglądarce, bez Pythona i klucza API.
+- [Notebook](agent_memory_workshop.ipynb) — kod, objaśnienia i interaktywny czat w każdym etapie.
+- [Wersja do czytania HTML](agent_memory_workshop.html) — pobierz i otwórz w przeglądarce, bez Pythona i klucza API.
 - [Slajdy wprowadzające](workshop_intro.html) — otwórz lokalnie w przeglądarce; nawigacja strzałkami.
 
 ## Uruchomienie
 
-Potrzebujesz Pythona 3.12–3.14, [uv](https://docs.astral.sh/uv/getting-started/installation/) oraz klucza OpenAI z dostępem do API. Wykonanie notebooka korzysta z płatnego API; odczyt zapisanych wyników nie wymaga klucza.
+Potrzebujesz Pythona 3.12–3.14, [uv](https://docs.astral.sh/uv/getting-started/installation/) oraz klucza OpenAI z dostępem do API. Wykonanie notebooka korzysta z płatnego API; czytanie kodu i opisów nie wymaga klucza.
 
 ```sh
 git clone https://github.com/brgsk/amemory-demo.git
@@ -21,7 +21,7 @@ uv sync --locked --extra openai
 uv run --extra openai jupyter lab agent_memory_workshop.ipynb
 ```
 
-W Jupyter wybierz **Restart Kernel and Run All Cells**. Komórka konfiguracji poprosi o klucz w ukrytym polu `getpass`. Klucz pozostaje w środowisku procesu kernela; notebook nie zapisuje go do pliku i nie odczytuje `.env`. Jeśli `OPENAI_API_KEY` jest już ustawiony, pytanie się nie pojawi.
+W Jupyter uruchom przygotowanie, a potem wykonuj po kolei definicję etapu, komórkę panelu i komórkę otwierającą czat. Wpisuj wiadomości i klikaj **Wyślij**. **Nowa rozmowa** czyści kontekst wątku, zachowując pamięć. Run All otworzy wszystkie etapy, pozostawiając aktywny tylko ostatni czat. Komórka konfiguracji poprosi o klucz w ukrytym polu `getpass`. Klucz pozostaje w środowisku procesu kernela; notebook nie zapisuje go do pliku i nie odczytuje `.env`. Jeśli `OPENAI_API_KEY` jest już ustawiony, pytanie się nie pojawi.
 
 Domyślny model to `gpt-4.1-2025-04-14`, embeddingi: `text-embedding-3-small`. Odpowiedzi i argumenty narzędzi mogą różnić się między uruchomieniami. Zmiana modelu przez `WORKSHOP_MODEL` może wymagać dostosowania promptu i ponownej weryfikacji.
 
@@ -47,7 +47,7 @@ Wyszukiwanie stosuje filtry, a następnie zwraca do trzech kandydatów według p
 
 W sekcji **Panel pamięci** uruchom komórkę i kliknij **Otwórz pamięć na żywo**. Panel pokazuje rekordy jako węzły; kliknięcie odsłania szczegóły. Kolor oznacza kategorię, przygaszenie dawną wersję wiedzy. Położenie nie przedstawia podobieństwa ani relacji.
 
-Panel działa lokalnie, dopóki działa kernel. Po restarcie uruchom komórkę ponownie i otwórz nowy link. Zapisany HTML nie ma połączenia z żywym panelem.
+Panel działa lokalnie, dopóki działa kernel. Po restarcie uruchom komórkę ponownie i otwórz nowy link. HTML służy do czytania kodu i opisów; nie zawiera działającego czatu ani połączenia z panelem.
 
 Każdy etap resetuje magazyn i ponownie wprowadza fakty rozmową. Wykonuj definicje, a potem demonstracje danego etapu. Po zmianie funkcji utwórz agenta ponownie przez `make_agent`, żeby otrzymał aktualne schematy narzędzi. Nie uruchamiaj starego demo z definicjami późniejszego etapu.
 
@@ -61,7 +61,7 @@ To przykład dla jednego użytkownika, z magazynem w RAM. Nie zawiera trwałej b
 
 ## Własne eksperymenty
 
-Edytuj funkcje i wiadomości bezpośrednio w notebooku. Cała implementacja jest w jego komórkach; osobne źródła i generator nie są potrzebne. Przed zmianami zachowaj kopię notebooka z oryginalnymi wynikami.
+Edytuj funkcje i wiadomości bezpośrednio w notebooku. Cała implementacja jest w jego komórkach; osobne źródła i generator nie są potrzebne. Przed zmianami zachowaj kopię notebooka.
 
 ## Dalsza lektura
 
@@ -71,3 +71,7 @@ Edytuj funkcje i wiadomości bezpośrednio w notebooku. Cała implementacja jest
 - [Bitemporal History — Martin Fowler](https://martinfowler.com/articles/bitemporal-history.html)
 - [Making Sense of Memory in AI Agents — Leonie Monigatti](https://www.leoniemonigatti.com/blog/memory-in-ai-agents.html)
 - [Memory in Agents — Philipp Schmid](https://www.philschmid.de/memory-in-agents)
+
+## Rozmowa w części temporalnej
+
+W etapie 5 pole **Otrzymano** ustawia zegar aplikacji przed wysłaniem wiadomości. Okres obowiązywania wynika z treści rozmowy. Przy odtwarzaniu dawnej wiedzy zacznij nowy wątek i podaj w pytaniu datę wyjazdu oraz datę wiedzy. Pole daty nie służy do cofania już wykonanych zapisów.

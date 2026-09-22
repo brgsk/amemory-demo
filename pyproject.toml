@@ -8,6 +8,7 @@ dependencies = [
   "langchain>=1,<2",
   "pydantic>=2,<3",
   "ipykernel>=6",
+  "ipywidgets>=8,<9",
   "jupyterlab>=4",
   "langchain-openai>=1.6.2",
 ]
